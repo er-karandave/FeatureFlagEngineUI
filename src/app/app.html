@@ -1,0 +1,13 @@
+<div>
+  @if(isUserLoggedIn){
+  <div>
+    <app-navbar></app-navbar>
+  </div>
+  <div>
+    <router-outlet></router-outlet>
+  </div>
+  }
+  @else {
+    <app-login></app-login>
+  }
+</div>

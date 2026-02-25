@@ -1,0 +1,32 @@
+import { NgModule } from '@angular/core';
+import { RouterModule, Routes } from '@angular/router';
+import { Login } from './Common/login/login';
+import { authGuard } from './Guards/auth-guard';
+import { NotFoundPage } from './shared/components/not-found-page/not-found-page';
+
+const routes: Routes = [
+  {
+    path: 'login',
+    component: Login
+  },
+  {
+    path: '',
+    loadChildren: () => import('./main/main-module').then(m => m.MainModule),
+    canActivate:[authGuard]
+  },
+  {
+    path:'**',
+    component:NotFoundPage
+  }
+  // {
+  //   path: '',
+  //   redirectTo: 'login',
+  //   pathMatch: 'full'
+  // }
+];
+
+@NgModule({
+  imports: [RouterModule.forRoot(routes)],
+  exports: [RouterModule]
+})
+export class AppRoutingModule { }

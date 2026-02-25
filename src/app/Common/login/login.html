@@ -1,0 +1,56 @@
+<p>login works!</p>
+
+<!-- <img src="../../../assets/gurujan.jpg"> -->
+
+<form (ngSubmit)="onSubmit()" class="form-horizontal login-form px-lg-4" [formGroup]="form">
+                <div class="col form-group">
+                    <div class="mb-2">
+                        <label for="email" class="col-form-label">{{"Email"}}<span class="required">*</span></label>
+                        <input id="email" noLeadingSpace tabIndex="3" #emailInput type="email" formControlName="email" class="form-control" name="email"
+                            value="" placeholder="Enter Email"
+                            [ngClass]="{ 'is-invalid': (f['email'].dirty || f['email'].touched) && f['email'].errors }">
+                        @if ((f['email'].dirty || f['email'].touched) &&
+                        f['email'].errors) {
+                        <div class="invalid-feedback">
+                            @if (f['email'].errors['required']) {
+                            <div>{{ "Email is a required field!"}}</div>
+                            }
+                            @if (f['email'].errors['email']) {
+                            <div>{{ "Please enter a valid email"}}</div>
+                            }
+                        </div>
+                        }
+                    </div>
+                </div>
+                <div class="col form-group">
+                    <div class="mb-2">
+                        <label for="password" class="col-form-label">{{'REGISTER_PAGES.PASSWORD'}}<span class="required">*</span></label>
+                        <input id="password" noLeadingSpace tabIndex="4" [type]="showPassword ? 'text' : 'password'" formControlName="password" class="form-control"
+                            name="password" placeholder="{{'REGISTER_PAGES.ENTERPASSWORD'}}"
+                            [ngClass]="{ 'is-invalid': (f['password'].dirty || f['password'].touched) && f['password'].errors }">
+                        @if ((f['password'].dirty || f['password'].touched) &&
+                        f['password'].errors) {
+                        <div class="invalid-feedback">
+                            @if (f['password'].errors['required']) {
+                            <div>{{ 'REGISTER_PAGES.PASSWORDREQUIRED' }}</div>
+                            }
+                        </div>
+                        }
+                    </div>
+                    <div class="col form-group ">
+                        <div class="form-check mt-2">
+                            <input type="checkbox" id="show" tabIndex="12" class="form-check-input" (click)="togglePasswordInput()">                                
+                            <label for="show">
+                                {{"REGISTER_PAGES.SHOWPASSWORD"}}
+                            </label>                                                    
+                        </div>                           
+                    </div>
+                </div>
+                <div class="col form-group">
+                    <div class="mb-2  d-flex gap-1">
+                        <button type="submit" tabIndex="8" class="btn-text btn green-grad text-white px-lg-5 px-md-5 px-2">
+                            {{"Login"}}
+                        </button>
+                    </div>
+                </div>
+            </form>
