@@ -1,4 +1,4 @@
-<div>
+<!-- <div>
   @if(isUserLoggedIn){
   <div>
     <app-navbar></app-navbar>
@@ -10,4 +10,22 @@
   @else {
     <app-login></app-login>
   }
+</div> -->
+
+<div class="app-container d-flex flex-column min-vh-100">
+  
+  <ng-container *ngIf="isUserLoggedIn; else loginTemplate">
+    <app-navbar class="sticky-top shadow-sm"></app-navbar>
+
+    <main class="flex-grow-1 container mt-5 pt-5">
+      <router-outlet></router-outlet>
+    </main>
+  </ng-container>
+
+  <ng-template #loginTemplate>
+    <div class="login-container d-flex justify-content-center align-items-center vh-100">
+      <app-login></app-login>
+    </div>
+  </ng-template>
+
 </div>

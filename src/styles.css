@@ -1,1 +1,10 @@
 /* You can add global styles to this file, and also import other style files */
+
+
+.input-group>:not(:first-child):not(.dropdown-menu):not(.valid-tooltip):not(.valid-feedback):not(.invalid-tooltip):not(.invalid-feedback) {
+    margin-right: -1px;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    border-bottom-left-radius: .25rem;
+    border-top-left-radius: .25rem;
+}

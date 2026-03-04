@@ -34,7 +34,7 @@ export class CommonService {
       
       // tap((response : any) => (isEncrypted) ? console.log("decryptResponse",decryptResponse(response.result)) :  ''),
       map(
-        (response: any) => response.result
+        (response: any) => response
       ),
       catchError((err) => throwError(() => err))
     );

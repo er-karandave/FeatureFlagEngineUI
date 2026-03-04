@@ -8,7 +8,11 @@ import { Navbar } from './Common/navbar/navbar';
 import { Footer } from './Common/footer/footer';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { provideHttpClient } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, provideHttpClient, withFetch, withInterceptorsFromDi } from '@angular/common/http';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { LOCAL_STORAGE } from './shared/services/TokenStorage/token-storage-service';
+import { SharedModule } from './shared/shared-module';
+import { authInterceptor } from './Interceptors/auth-interceptor';
 
 @NgModule({
   declarations: [
@@ -22,12 +26,18 @@ import { provideHttpClient } from '@angular/common/http';
     AppRoutingModule,
     CommonModule,
     FormsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    NgbModule,SharedModule
   ],
   providers: [
     provideBrowserGlobalErrorListeners(),
     provideZonelessChangeDetection(),
-    provideHttpClient()
+    provideHttpClient(withInterceptorsFromDi(), withFetch()),
+     {
+      provide: LOCAL_STORAGE,
+      useValue: window.localStorage
+    },
+    { provide: HTTP_INTERCEPTORS, useClass: authInterceptor, multi: true },
   ],
   bootstrap: [App]
 })

@@ -12,27 +12,34 @@ import { RoleListing } from './Roles/role-listing/role-listing';
 import { AddEditRole } from './Roles/add-edit-role/add-edit-role';
 import { ViewRole } from './Roles/view-role/view-role';
 import { PermissionRoles } from './Permissions/permission-roles/permission-roles';
+import { authGuard } from '../Guards/auth-guard';
 
 const routes: Routes = [
   {
     path: 'dashboard',
-    component: Dashboard
+    component: Dashboard,
+    canActivate:[authGuard]
+
   },
   {
     path: 'user-list',
     component: UserListing,
+    canActivate:[authGuard]
   },
   {
     path: 'add-user',
-    component: AddEditUser
+    component: AddEditUser,
+    canActivate:[authGuard]
   },
   {
     path: 'edit-user/:id',
-    component: AddEditUser
+    component: AddEditUser,
+    canActivate:[authGuard]
   },
   {
     path: 'view-user/:id',
-    component: ViewUser
+    component: ViewUser,
+    canActivate:[authGuard]
   },
   {
     path: 'permission-list',

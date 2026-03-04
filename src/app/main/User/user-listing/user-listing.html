@@ -1,1 +1,79 @@
-<p>user-listing works!</p>
+<!-- <app-common-data-table></app-common-data-table> -->
+
+<div class="container-fluid py-4">
+
+  <div class="card shadow-sm">
+    <div class="card-body">
+
+      <h5 class="mb-3 fw-bold">Feature Listing</h5>
+
+      <div class="table-responsive">
+        <table class="table table-bordered table-hover align-middle custom-table">
+
+          <thead class="table-light">
+            <tr>
+              <th>#</th>
+              <th>Feature Name</th>
+              <th>Display Name</th>
+              <th>Status</th>
+              <th class="text-center">Actions</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr *ngFor="let item of featureList; let i = index">
+
+              <td>{{ i + 1 }}</td>
+              <td>{{ item.featureName }}</td>
+              <td>{{ item.featureDisplayName }}</td>
+
+              <td>
+                <span class="badge"
+                      [ngClass]="item.isActive ? 'bg-success' : 'bg-danger'">
+                  {{ item.isActive ? 'Active' : 'Inactive' }}
+                </span>
+              </td>
+
+              <!-- ACTION ICONS -->
+              <td class="text-center">
+
+                <div class="d-flex justify-content-center gap-3">
+
+                  <!-- Add -->
+                  <span class="tooltip-wrapper">
+                    <i class="bi bi-plus-circle text-success action-icon"></i>
+                    <span class="custom-tooltip">Add</span>
+                  </span>
+
+                  <!-- View -->
+                  <span class="tooltip-wrapper">
+                    <i class="bi bi-eye text-primary action-icon"></i>
+                    <span class="custom-tooltip">View</span>
+                  </span>
+
+                  <!-- Edit -->
+                  <span class="tooltip-wrapper">
+                    <i class="bi bi-pencil-square text-warning action-icon"></i>
+                    <span class="custom-tooltip">Edit</span>
+                  </span>
+
+                  <!-- Delete -->
+                  <span class="tooltip-wrapper">
+                    <i class="bi bi-trash text-danger action-icon"></i>
+                    <span class="custom-tooltip">Delete</span>
+                  </span>
+
+                </div>
+
+              </td>
+
+            </tr>
+          </tbody>
+
+        </table>
+      </div>
+
+    </div>
+  </div>
+
+</div>

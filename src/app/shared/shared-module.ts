@@ -5,6 +5,9 @@ import { CommonDataTable } from './components/common-data-table/common-data-tabl
 import { ErrorHandling } from './components/error-handling/error-handling';
 import { NotFoundPage } from './components/not-found-page/not-found-page';
 import { Toast } from './services/Toast/toast/toast';
+import { NgbToast } from '@ng-bootstrap/ng-bootstrap';
+import { LOCAL_STORAGE } from './services/TokenStorage/token-storage-service';
+import { NoLeadingSpace } from './directives/no-leading-space';
 
 
 @NgModule({
@@ -12,10 +15,14 @@ import { Toast } from './services/Toast/toast/toast';
     CommonDataTable,
     ErrorHandling,
     NotFoundPage,
-    Toast
+    Toast,
+    NoLeadingSpace
   ],
   imports: [
     CommonModule,
-  ]
+    NgbToast,
+  ],
+  exports:[CommonDataTable]
+
 })
 export class SharedModule { }

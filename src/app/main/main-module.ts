@@ -17,6 +17,8 @@ import { AddEditRole } from './Roles/add-edit-role/add-edit-role';
 import { RolePermission } from './Roles/role-permission/role-permission';
 import { ViewRole } from './Roles/view-role/view-role';
 import { PermissionRoles } from './Permissions/permission-roles/permission-roles';
+import { SharedModule } from "../shared/shared-module";
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 
 @NgModule({
@@ -39,7 +41,8 @@ import { PermissionRoles } from './Permissions/permission-roles/permission-roles
   ],
   imports: [
     CommonModule,
-    MainRoutingModule
-  ]
+    MainRoutingModule,
+    SharedModule,FormsModule,ReactiveFormsModule
+]
 })
 export class MainModule { }
