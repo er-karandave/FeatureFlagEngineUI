@@ -1,45 +1,97 @@
-import { Injectable, TemplateRef } from '@angular/core';
+import { Injectable, signal, TemplateRef } from '@angular/core';
+
+
+export interface ToastInterface {
+  id: string;
+  textOrTpl: string | TemplateRef<any>;
+  classname: string;
+  delay: number;
+  icon: string;
+  autoHide?: boolean;
+  timeoutId?: any;
+}
 
 @Injectable({
   providedIn: 'root',
 })
 export class ToastService {
-  toasts: any[] = [];
-  option = { 
-    classname: 'bg-danger text-white p-2', 
-    delay: 5000,
-    icon: ''
+  private toastsSignal = signal<ToastInterface[]>([]);
+
+  readonly toasts = this.toastsSignal.asReadonly();
+
+  private toastCounter = 0;
+
+  private generateId(): string {
+    return `toast-${++this.toastCounter}-${Date.now()}`;
   }
 
-  success(textOrTpl: string | TemplateRef<any>) {
-    this.option.classname = 'bg-success text-white'
-    this.option.icon = 'bx bx-check'
-    this.toasts = [];
-    this.toasts.push({ textOrTpl, ...this.option });
+  private createToast(
+    textOrTpl: string | TemplateRef<any>,
+    classname: string,
+    icon: string,
+    delay: number = 3000
+  ): ToastInterface {
+    return {
+      id: this.generateId(),
+      textOrTpl,
+      classname,
+      icon,
+      delay
+    };
   }
 
-  info(textOrTpl: string | TemplateRef<any>) {
-    this.option.classname = 'bg-info text-white'
-    this.option.icon = 'bx bx-info-circle'
-    this.toasts = [];
-    this.toasts.push({ textOrTpl, ...this.option });
+  private addToastWithAutoDismiss(toast: ToastInterface) {
+    this.toastsSignal.update(toasts => [...toasts, toast]);
+
+    const timeoutId = setTimeout(() => {
+      this.remove(toast.id);
+    }, toast.delay);
+    toast.timeoutId = timeoutId;
   }
 
-  error(textOrTpl: string | TemplateRef<any>) {
-    this.option.classname = 'bg-danger text-white'
-    this.option.icon='bx bx-error'
-    this.toasts = [];
-    this.toasts.push({ textOrTpl, ...this.option });
+  success(message: string | TemplateRef<any>, delay: number = 3000) {
+    this.addToastWithAutoDismiss(
+      this.createToast(message, 'bg-success text-white', 'bx bx-check', delay)
+    );
   }
 
-  warrning(textOrTpl: string | TemplateRef<any>){
-    this.option.classname = 'bg-warning text-white'
-    this.option.icon='bx bxs-alarm-exclamation'
-    this.toasts = [];
-    this.toasts.push({ textOrTpl, ...this.option });
+  error(message: string | TemplateRef<any>, delay: number = 3000) {
+    this.addToastWithAutoDismiss(
+      this.createToast(message, 'bg-danger text-white', 'bx bx-error', delay)
+    );
   }
 
-  remove(toast: any) {
-    this.toasts = this.toasts.filter(t => t !== toast);
+  info(message: string | TemplateRef<any>, delay: number = 3000) {
+    this.addToastWithAutoDismiss(
+      this.createToast(message, 'bg-info text-white', 'bx bx-info-circle', delay)
+    );
+  }
+
+  warning(message: string | TemplateRef<any>, delay: number = 3000) {
+    this.addToastWithAutoDismiss(
+      this.createToast(message, 'bg-warning text-dark', 'bx bxs-alarm-exclamation', delay)
+    );
+  }
+
+  remove(toastId: string) {
+    const toasts = this.toastsSignal();
+    const toast = toasts.find(t => t.id === toastId);
+
+    if (toast?.timeoutId) {
+      clearTimeout(toast.timeoutId); 
+    }
+
+    this.toastsSignal.update(toasts => toasts.filter(t => t.id !== toastId));
+  }
+
+  clear() {
+    this.toastsSignal().forEach(toast => {
+      if (toast.timeoutId) clearTimeout(toast.timeoutId);
+    });
+    this.toastsSignal.set([]);
+  }
+
+  ngOnDestroy() {
+    this.clear();
   }
 }

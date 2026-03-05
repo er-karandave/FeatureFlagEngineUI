@@ -21,18 +21,10 @@ export class CommonService {
   }
 
   post(API: string, data?: any): Observable<any> {
-    // const isEncrypted = environment.isEncrypted;
     let postData = {
       ...data,
     }
-    // if (isEncrypted) {
-    //   postData = {
-    //     data: encryptRequest(data),
-    //   }
-    // }
     return this.http.post(`${API}`, postData, this.options).pipe(
-      
-      // tap((response : any) => (isEncrypted) ? console.log("decryptResponse",decryptResponse(response.result)) :  ''),
       map(
         (response: any) => response
       ),

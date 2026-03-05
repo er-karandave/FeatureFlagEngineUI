@@ -13,6 +13,7 @@ import { AddEditRole } from './Roles/add-edit-role/add-edit-role';
 import { ViewRole } from './Roles/view-role/view-role';
 import { PermissionRoles } from './Permissions/permission-roles/permission-roles';
 import { authGuard } from '../Guards/auth-guard';
+import { featureActiveResolver } from '../shared/resolvers/feature-active-resolver';
 
 const routes: Routes = [
   {
@@ -24,58 +25,145 @@ const routes: Routes = [
   {
     path: 'user-list',
     component: UserListing,
-    canActivate:[authGuard]
+    canActivate:[authGuard],
+    resolve: {
+      featureCheck: featureActiveResolver
+    },
+    data: {
+      featureId: 1  
+    }
   },
   {
     path: 'add-user',
     component: AddEditUser,
-    canActivate:[authGuard]
+    canActivate:[authGuard],
+    resolve: {
+      featureCheck: featureActiveResolver
+    },
+    data: {
+      featureId: 5  
+    }
   },
   {
     path: 'edit-user/:id',
     component: AddEditUser,
-    canActivate:[authGuard]
+    canActivate:[authGuard],
+    resolve: {
+      featureCheck: featureActiveResolver
+    },
+    data: {
+      featureId: 6  
+    }
   },
   {
     path: 'view-user/:id',
     component: ViewUser,
-    canActivate:[authGuard]
+    canActivate:[authGuard],
+    resolve: {
+      featureCheck: featureActiveResolver
+    },
+    data: {
+      featureId: 7 
+    }
   },
   {
     path: 'permission-list',
-    component: PermissionListing
+    component: PermissionListing,
+    canActivate:[authGuard],
+    resolve: {
+      featureCheck: featureActiveResolver
+    },
+    data: {
+      featureId: 8  
+    }
   },
   {
     path:'add-permission',
-    component:AddEditPermissions
+    component:AddEditPermissions,
+    canActivate:[authGuard],
+    resolve: {
+      featureCheck: featureActiveResolver
+    },
+    data: {
+      featureId: 9  
+    }
   },
   {
     path:'edit-permission/:id',
-    component:AddEditPermissions
+    component:AddEditPermissions,
+    canActivate:[authGuard],
+    resolve: {
+      featureCheck: featureActiveResolver
+    },
+    data: {
+      featureId: 10  
+    }
   },
   {
     path:'permission-user',
-    component:PermissionUser
+    component:PermissionUser,
+    canActivate:[authGuard],
+    resolve: {
+      featureCheck: featureActiveResolver
+    },
+    data: {
+      featureId: 11 
+    }
   },
   {
     path:'user-permission/:id',
-    component:UserPermission
+    component:UserPermission,
+    canActivate:[authGuard],
+    resolve: {
+      featureCheck: featureActiveResolver
+    },
+    data: {
+      featureId: 12  
+    }
   },
   {
     path:'role-list',
-    component:RoleListing
+    component:RoleListing,
+    canActivate:[authGuard],
+    resolve: {
+      featureCheck: featureActiveResolver
+    },
+    data: {
+      featureId: 13  
+    }
   },
   {
     path:'add-role',
-    component:AddEditRole
+    component:AddEditRole,
+    canActivate:[authGuard],
+    resolve: {
+      featureCheck: featureActiveResolver
+    },
+    data: {
+      featureId: 14  
+    }
   },
   {
     path:'edit-role/:id',
-    component:AddEditRole
+    component:AddEditRole,
+    canActivate:[authGuard],
+    resolve: {
+      featureCheck: featureActiveResolver
+    },
+    data: {
+      featureId: 15  
+    }
   },
   {
     path:'permission-role/:id',
-    component:PermissionRoles
+    component:PermissionRoles,
+    canActivate:[authGuard],
+    resolve: {
+      featureCheck: featureActiveResolver
+    },
+    data: {
+      featureId: 16
+    }
   }
 ];
 

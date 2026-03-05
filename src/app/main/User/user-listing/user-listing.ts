@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 
 
 declare var bootstrap: any;
@@ -9,6 +10,20 @@ declare var bootstrap: any;
   styleUrl: './user-listing.css',
 })
 export class UserListing {
+
+  constructor(private route: ActivatedRoute){
+    
+  }
+
+  ngOnInit(): void {
+    this.route.data.subscribe((data) => {
+      const resposne = data;
+      
+      if (resposne['featureCheck']) {
+        console.log('✅ Feature is active, loading component...');
+      }
+    });
+  }
 
   featureList = [
   {

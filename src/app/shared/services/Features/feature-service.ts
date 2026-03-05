@@ -4,6 +4,11 @@ import { Observable } from 'rxjs';
 import { GlobalComponent } from '../../../global-component';
 import { Feature } from '../../../main/dashboard/dashboard';
 
+export interface FeatureStatusResponse {
+  isActive: boolean;
+  message?: string;
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -34,11 +39,24 @@ export class FeatureService {
     return this._commonService.post(`${GlobalComponent.getAllFeatures}`)
   }
 
-  updateFeature(updatedFeature:Feature): Observable<any> {
+  updateFeature(updatedFeature: Feature): Observable<any> {
     return this._commonService.post(`${GlobalComponent.getAllFeatures}`)
   }
 
-  deleteFeature(featureMasterId: number): Observable<any> {
-    return this._commonService.post(`${GlobalComponent.getAllFeatures}`)
+  deleteFeatureById(featureId: number): Observable<any> {
+    return this._commonService.post(`${GlobalComponent.deleteFeatureById}?FeatureId=${featureId}`)
+  }
+
+  updateFeatureStatus(
+    featureId: number | undefined,
+    isActive: boolean
+  ): Observable<{ success: boolean; message: string }> {
+    return this._commonService.post(
+      `${GlobalComponent.updateFeatureStatus}?FeatureId=${featureId}&IsActive=${isActive}`
+    );
+  }
+
+  isFeatureActive(featureId: number): Observable<FeatureStatusResponse> {
+    return this._commonService.post(`${GlobalComponent.isFeatureActive}${featureId}/status`)
   }
 }

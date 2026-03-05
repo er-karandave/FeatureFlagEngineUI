@@ -1,33 +1,32 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, signal } from '@angular/core';
-import { FeatureService } from '../../shared/services/Features/feature-service';
+import { FeatureService, FeatureStatusResponse } from '../../shared/services/Features/feature-service';
 import { catchError, map, of, take } from 'rxjs';
 import { FormControl, FormGroup } from '@angular/forms';
+import { ToastService } from '../../shared/services/Toast/toast-service';
+import { FeatureState } from '../../shared/services/FeatureState/feature-state';
 
 
-// export interface NavItem {
-//   label: string;
-//   link: string;
-//   exact?: boolean;
-// }
-
-// export interface Feature {
-//   idFeature: number;
-//   featureDisplayName: string;
-//   link: string;
-// }
 
 export interface NavItem {
-  idFeature?: number; // Added to track feature for edit/delete
+  idFeature?: number;
   label: string;
   link: string;
+  isActive: boolean;
   exact?: boolean;
-  status?: string; // Added to match the UI table status column
+  status?: string;
+
 }
+
+
 
 export interface Feature {
   idFeature: number;
-  featureDisplayName: string;
-  link: string;
+  label: string;
+  details?: string;
+  featureDisplayName?: string;
+  link?: string;
+  status: string;
+  isActive: boolean;
 }
 
 @Component({
@@ -39,117 +38,25 @@ export interface Feature {
 })
 export class Dashboard {
 
-  // navItems = signal<NavItem[]>([]);
-  // constructor(private _featureService: FeatureService) {
 
-  // }
-
-  // ngOnInit() {
-  //   this._featureService.getAllFeatures()
-  //     .pipe(
-  //       take(1),
-
-  //       // Ensure API response is typed as Feature[]
-  //       map((features: Feature[]) =>
-  //         features.map((feature) => ({
-  //           label: feature.featureDisplayName,
-  //           link: feature.link,
-  //           exact: false
-  //         }))
-  //       ),
-
-  //       // Return proper type on error
-  //       catchError(() => of<NavItem[]>([]))
-  //     )
-  //     .subscribe((navItems: NavItem[]) => {
-  //       this.navItems.set(navItems);
-  //       console.log(navItems)
-  //     });    
-  // }
-
-  // getAllActiveFeatures(){
-  //   this._featureService.getAllActiveFeatures()
-  //     .pipe(
-  //       take(1),
-
-  //       // Ensure API response is typed as Feature[]
-  //       map((features: Feature[]) =>
-  //         features.map((feature) => ({
-  //           label: feature.featureDisplayName,
-  //           link: feature.link,
-  //           exact: false
-  //         }))
-  //       ),
-
-  //       // Return proper type on error
-  //       catchError(() => of<NavItem[]>([]))
-  //     )
-  //     .subscribe((navItems: NavItem[]) => {
-  //       this.navItems.set(navItems);
-  //     });
-  // }
-
-  // getAllInActiveFeatures(){
-  //   this._featureService.getAllInActiveFeatures()
-  //     .pipe(
-  //       take(1),
-
-  //       // Ensure API response is typed as Feature[]
-  //       map((features: Feature[]) =>
-  //         features.map((feature) => ({
-  //           label: feature.featureDisplayName,
-  //           link: feature.link,
-  //           exact: false
-  //         }))
-  //       ),
-
-  //       // Return proper type on error
-  //       catchError(() => of<NavItem[]>([]))
-  //     )
-  //     .subscribe((navItems: NavItem[]) => {
-  //       this.navItems.set(navItems);
-  //     });
-  // }
-
-  // getAllFeatures(){
-  //   this._featureService.getAllFeatures()
-  //     .pipe(
-  //       take(1),
-
-  //       // Ensure API response is typed as Feature[]
-  //       map((features: Feature[]) =>
-  //         features.map((feature) => ({
-  //           label: feature.featureDisplayName,
-  //           link: feature.link,
-  //           exact: false
-  //         }))
-  //       ),
-
-  //       // Return proper type on error
-  //       catchError(() => of<NavItem[]>([]))
-  //     )
-  //     .subscribe((navItems: NavItem[]) => {
-  //       this.navItems.set(navItems);
-  //     });
-  // }
 
 
   navItems = signal<NavItem[]>([]);
-  
 
-  // Modal State Signals
+
   isEditModalOpen = signal<boolean>(false);
   isDeleteModalOpen = signal<boolean>(false);
-featureDisplayName = signal('');
-featureLink = signal('');
-  // Selected Data Signals
+  featureDisplayName = signal('');
+  featureLink = signal('');
   editingFeature = signal<Feature | null>(null);
   deletingFeatureId = signal<number | null>(null);
 
   constructor(private _featureService: FeatureService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private toastr: ToastService,
+    private _featureStateService: FeatureState
   ) {
-    
+
   }
 
   ngOnInit() {
@@ -166,12 +73,13 @@ featureLink = signal('');
             label: feature.featureDisplayName,
             link: feature.link,
             exact: false,
-            status: 'Active'
+            status: feature.isActive === true ? 'Active' : 'Inactive',
+            isActive: feature.isActive
           }))
         ),
         catchError(() => of<NavItem[]>([]))
       )
-      .subscribe((navItems: NavItem[]) => {
+      .subscribe((navItems: any[]) => {
         this.navItems.set(navItems);
       });
   }
@@ -186,12 +94,13 @@ featureLink = signal('');
             label: feature.featureDisplayName,
             link: feature.link,
             exact: false,
-            status: 'Inactive'
+            status: feature.isActive === true ? 'Active' : 'Inactive',
+            isActive: feature.isActive
           }))
         ),
         catchError(() => of<NavItem[]>([]))
       )
-      .subscribe((navItems: NavItem[]) => {
+      .subscribe((navItems: any[]) => {
         this.navItems.set(navItems);
       });
   }
@@ -206,32 +115,31 @@ featureLink = signal('');
             label: feature.featureDisplayName,
             link: feature.link,
             exact: false,
-            status: 'Active' // Replace with actual status logic if your Feature model has it
+            status: (feature.isActive === true) ? 'Active' : 'Inactive',
+            isActive: feature.isActive
           }))
         ),
         catchError(() => of<NavItem[]>([]))
       )
-      .subscribe((navItems: NavItem[]) => {
+      .subscribe((navItems: any[]) => {
         this.navItems.set(navItems);
       });
   }
 
-  // --- EDIT LOGIC ---
   openEditModal(id: number) {
-  this._featureService.getFeaturesByFeatureId(id)
-    .pipe(take(1))
-    .subscribe({
-      next: (feature: any) => {
-        // ✅ Signals — no FormGroup, no DOM timing, no CD issues
-        console.log(feature[0].featureDisplayName)
-        this.featureDisplayName.set(feature[0].featureDisplayName);
-        this.featureLink.set(feature[0].link);
-        this.editingFeature.set(feature);
-        this.isEditModalOpen.set(true);
-      },
-      error: (err) => console.error(err)
-    });
-}
+    this._featureService.getFeaturesByFeatureId(id)
+      .pipe(take(1))
+      .subscribe({
+        next: (feature: any) => {
+          console.log(feature[0].featureDisplayName)
+          this.featureDisplayName.set(feature[0].featureDisplayName);
+          this.featureLink.set(feature[0].link);
+          this.editingFeature.set(feature);
+          this.isEditModalOpen.set(true);
+        },
+        error: (err) => console.error(err)
+      });
+  }
 
   closeEditModal() {
     this.isEditModalOpen.set(false);
@@ -239,27 +147,84 @@ featureLink = signal('');
     this.cdr.detectChanges();
   }
   saveEdit() {
-  const currentFeature = this.editingFeature();
-  if (!currentFeature) return;
+    const currentFeature = this.editingFeature();
+    if (!currentFeature) return;
 
-  const updatedFeature: Feature = {
-    ...currentFeature,
-    featureDisplayName: this.featureDisplayName(),
-    link: this.featureLink()
-  };
+    const updatedFeature: Feature = {
+      ...currentFeature,
+      featureDisplayName: this.featureDisplayName(),
+      link: this.featureLink()
+    };
 
-  console.log(updatedFeature); // ✅ correct values
-  // Assumes FeatureService has an updateFeature method
+    console.log(updatedFeature);
     // this._featureService.updateFeature(updatedFeature)
     //   .pipe(take(1))
     //   .subscribe({
     //     next: () => {
     //       this.closeEditModal();
-    //       this.getAllFeatures(); // Refresh table
+    //       this.getAllFeatures(); 
     //     },
     //     error: (err) => console.error('Error updating feature', err)
     //   });
-}
+  }
+
+
+  ChangeFeatureActiveStatus(featureId: number | undefined, newStatus: string) {
+    const isActive = newStatus === 'Active';
+    const originalStatus = newStatus;
+    const features = this.navItems();
+    this.navItems.set(features.map(f =>
+      f.idFeature === featureId ? { ...f, status: newStatus } : f
+    ));
+
+    this._featureService.updateFeatureStatus(featureId, isActive).subscribe({
+      next: (response: { success: boolean; message: string }) => {
+        if (response.success) {
+          this.showNotification(response.message, 'success');
+          this._featureStateService.triggerFeatureRefresh();
+        } else {
+          this.revertStatus(featureId, originalStatus);
+          this.showNotification(response.message, 'error');
+        }
+        this.getAllFeatures()
+      },
+      error: (err: any) => {
+        this.revertStatus(featureId, originalStatus);
+
+        let errorMessage = 'Failed to update status. Please try again.';
+
+        if (err.status === 400 && err.error?.message) {
+          errorMessage = err.error.message;
+        } else if (err.status === 0) {
+          errorMessage = 'Network error. Please check your connection.';
+        } else if (err.status === 500) {
+          errorMessage = 'Server error. Please contact support.';
+        }
+
+        this.showNotification(errorMessage, 'error');
+        this.getAllFeatures();
+        console.error('Update error:', err);
+      }
+    });
+  }
+
+  private revertStatus(featureId: number | undefined, originalStatus: string) {
+    const features = this.navItems();
+    this.navItems.set(features.map(f =>
+      f.idFeature === featureId ? { ...f, status: originalStatus } : f
+    ));
+  }
+
+  private showNotification(message: string, type: 'success' | 'error') {
+    if (type === 'success') {
+      console.log('✅', message);
+      this.toastr.success(message);
+    } else {
+      console.error('❌', message);
+      alert(message);
+      this.toastr.error(message);
+    }
+  }
 
   // saveEdit(value: any) {
   //   const currentFeature = this.editingFeature();
@@ -272,7 +237,6 @@ featureLink = signal('');
   //   };
 
   //   console.log(value)
-  //   // Assumes FeatureService has an updateFeature method
   //   // this._featureService.updateFeature(updatedFeature)
   //   //   .pipe(take(1))
   //   //   .subscribe({
@@ -284,7 +248,6 @@ featureLink = signal('');
   //   //   });
   // }
 
-  // --- DELETE LOGIC ---
 
   openDeleteModal(id: number) {
     this.deletingFeatureId.set(id);
@@ -299,16 +262,21 @@ featureLink = signal('');
   confirmDelete() {
     const id = this.deletingFeatureId();
     if (id !== null) {
-      // Assumes FeatureService has a deleteFeature method
-      this._featureService.deleteFeature(id)
-        .pipe(take(1))
-        .subscribe({
-          next: () => {
-            this.closeDeleteModal();
-            this.getAllFeatures(); // Refresh table
-          },
-          error: (err) => console.error('Error deleting feature', err)
-        });
+      this._featureService.deleteFeatureById(id).subscribe({
+        next: (response: any) => {
+          this.showNotification(response.message, 'success');
+          this.getAllFeatures();
+          this.isDeleteModalOpen.set(false);
+        },
+        error: (errorResponse: any) => {
+          const message = errorResponse?.error?.message
+            || errorResponse?.message
+            || 'Failed to delete feature. Please try again.';
+          this.showNotification(message, 'error');
+          this.isDeleteModalOpen.set(false);
+
+        }
+      });
     }
   }
 

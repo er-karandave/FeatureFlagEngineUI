@@ -7,4 +7,7 @@ export const GlobalComponent = {
     getAllActiveFeatures : `${environment.apiURL}Feature/getAllActiveFeatures`,
     getAllInActiveFeatures : `${environment.apiURL}Feature/getAllInActiveFeatures`,
     getAllFeatures : `${environment.apiURL}Feature/getAllFeatures`,
+    updateFeatureStatus : `${environment.apiURL}Feature/UpdateFeatureStatus`,
+    deleteFeatureById : `${environment.apiURL}Feature/deleteFeatureById`,
+    isFeatureActive : `${environment.apiURL}Feature/`,
 }

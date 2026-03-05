@@ -16,7 +16,8 @@ export class App {
 
   constructor(private _userService: UserService,
     private router: Router,
-    private _routeHistory: RouteHistoryService
+    private _routeHistory: RouteHistoryService,
+
   ) {
 
   }
@@ -27,7 +28,7 @@ export class App {
       console.log(this.router.url)
       console.log(this._routeHistory.getPreviousUrl())
       if (status && this.router.url == '/login') {
-        // this.router.navigate(['/dashboard']);
+        this.router.navigate(['/dashboard']);
         return;
       }
     });

@@ -212,6 +212,43 @@
       <h5 class="mb-3">Feature List</h5>
 
       <div class="table-responsive">
+        <!-- <table class="table table-hover align-middle">
+          <thead class="table-light">
+            <tr>
+              <th>#</th>
+              <th>Feature Name</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (item of navItems(); track $index; let i = $index) {
+            <tr>
+              <td>{{ i + 1 }}</td>
+              <td>{{ item.label }}</td>
+              <td>
+                <span class="badge" [ngClass]="item.status === 'Active' ? 'bg-success' : 'bg-danger'">
+                  {{ item.status }}
+                </span>
+              </td>
+              <td>
+                @if (item.idFeature !== undefined) {
+                <button class="btn btn-sm btn-outline-primary me-2" (click)="openEditModal(item.idFeature)">
+                  Edit
+                </button>
+                <button class="btn btn-sm btn-outline-danger" (click)="openDeleteModal(item.idFeature)">
+                  Delete
+                </button>
+                }
+              </td>
+            </tr>
+            } @empty {
+            <tr>
+              <td colspan="4" class="text-center py-4 text-muted">No features found.</td>
+            </tr>
+            }
+          </tbody>
+        </table> -->
         <table class="table table-hover align-middle">
           <thead class="table-light">
             <tr>
@@ -223,14 +260,20 @@
           </thead>
           <tbody>
             <!-- Dynamic Table Generation using @for control flow -->
-            @for (item of navItems(); track $index; let i = $index) {
+            @for (item of navItems(); track item.idFeature; let i = $index) {
             <tr>
               <td>{{ i + 1 }}</td>
               <td>{{ item.label }}</td>
               <td>
-                <span class="badge" [ngClass]="item.status === 'Active' ? 'bg-success' : 'bg-danger'">
-                  {{ item.status }}
-                </span>
+                <div class="form-check form-switch">
+                  <input class="form-check-input" type="checkbox" role="switch" [id]="'switch_' + item.idFeature"
+                    [checked]="item.status === 'Active'"
+                    (change)="ChangeFeatureActiveStatus(item.idFeature, $any($event).target.checked ? 'Active' : 'Inactive')">
+                  <label class="form-check-label" [for]="'switch_' + item.idFeature"
+                    [class.text-success]="item.status === 'Active'" [class.text-danger]="item.status === 'Inactive'">
+                    {{ item.status }}
+                  </label>
+                </div>
               </td>
               <td>
                 @if (item.idFeature !== undefined) {
@@ -270,8 +313,6 @@
         <button type="button" class="btn-close" (click)="closeEditModal()" aria-label="Close"></button>
       </div>
 
-      <!-- New @if syntax automatically handles aliasing and scope correctly -->
-      <!-- ✅ No @if — form always in DOM, modal visibility controls display -->
       <div class="modal-body">
         <div class="mb-3">
           <label class="form-label">Feature Name</label>

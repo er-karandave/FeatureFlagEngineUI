@@ -107,8 +107,6 @@ export class Login {
   setDataAfterLogin(responseData: any) {
     this._tokenStorageService.saveUser({ ...responseData.user, ip: responseData.ip });
     this._tokenStorageService.saveToken(responseData.token);
-    // this._eventService.broadcast(BroadcastEvents.showGrecaptcha, { action: false })
-    // this._eventService.broadcast(BroadcastEvents.isUserLogin, true)
     this.afterLoginEmit.emit({ ...responseData.user, ip: responseData.ip })
     this._router.navigateByUrl('/dashboard')
   }

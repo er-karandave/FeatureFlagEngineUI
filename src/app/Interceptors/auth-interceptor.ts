@@ -29,7 +29,6 @@ export class authInterceptor implements HttpInterceptor {
         if (error.error.result) {
           errorData = error.error.result;
         }
-        // console.log("errorData",errorData);
        
          if (
           error instanceof HttpErrorResponse &&
@@ -50,7 +49,6 @@ export class authInterceptor implements HttpInterceptor {
             errorData = { ...errorData, errorCode: error.status } as any
             this._router.navigateByUrl('**')
             return throwError(() => errorData);
-            // this._toastService.error(ErrorMessages.PageNotFound);
           } else {
             this._toastService.error(errorData.message || ErrorMessages.PageNotFound);
           }
@@ -58,12 +56,10 @@ export class authInterceptor implements HttpInterceptor {
         } else if (error.status === 405) {
           errorData = { ...errorData, errorCode: error.status } as any
           return throwError(() => errorData);
-          // this._toastService.error(error.statusText);
         } else if (error.status === 400) {
           errorData = { ...errorData, errorCode: error.status } as any
           this._toastService.error(errorData.message || ErrorMessages.InternalServerError);
           return throwError(() => errorData);
-          // this._toastService.error(errorData.message || ErrorMessages.InternalServerError);
         } else if (error.status === 422) {
           if (request.url.includes(GlobalComponent.loginApi)) {
             errorData = { ...errorData, errorCode: error.status } as any
@@ -76,17 +72,15 @@ export class authInterceptor implements HttpInterceptor {
           }
           return throwError(() => errorData);
         } else if (error.status === 403) {
-          this._toastService.warrning(errorData.message);
+          this._toastService.warning(errorData.message);
           this._router.navigate(['/']);
           errorData = { ...errorData, errorCode: error.status } as any
           return throwError(() => errorData);
-          // this._toastService.error(errorData.message ?? error.statusText);
         } else if (error.status === 429) {
-          // this._toastService.error(errorData.message ?? error.statusText);
           errorData = { ...errorData, errorCode: error.status } as any
           return throwError(() => errorData);
         } else if (error.status === 409) {
-          this._toastService.warrning(errorData.message ?? error.statusText);
+          this._toastService.warning(errorData.message ?? error.statusText);
           errorData = { ...errorData, errorCode: error.status } as any
           return throwError(() => errorData);
         } else if (error.status === 500) {

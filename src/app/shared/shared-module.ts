@@ -20,9 +20,9 @@ import { NoLeadingSpace } from './directives/no-leading-space';
   ],
   imports: [
     CommonModule,
-    NgbToast,
+    NgbToast
   ],
-  exports:[CommonDataTable]
+  exports:[CommonDataTable,Toast]
 
 })
 export class SharedModule { }
