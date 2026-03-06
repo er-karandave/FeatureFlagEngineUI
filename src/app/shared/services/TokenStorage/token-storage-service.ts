@@ -1,13 +1,12 @@
 import { Inject, Injectable, InjectionToken } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { environment } from '../../../../environments/environment.development';
+import { CurrentUser } from '../../models/userLogin';
 
 export const LOCAL_STORAGE = new InjectionToken<Storage>('LocalStorage');
 
-const prefix = 'eox-app-'
-
-const TOKEN_KEY = `${prefix}auth-token`;
-const USER_KEY = `${prefix}currentUser`;
+const TOKEN_KEY = 'eox-app-auth-token';
+const USER_KEY = 'eox-app-user';
 
 @Injectable({
   providedIn: 'root',
@@ -20,74 +19,56 @@ export class TokenStorageService {
     @Inject(LOCAL_STORAGE) private localStorage: Storage,
   ) { }
 
-  public saveToken(token: string): void {
-    this.localStorage.removeItem(TOKEN_KEY);
-    this.localStorage.setItem(TOKEN_KEY, token);
+  saveToken(token: string): void {
+    localStorage.setItem(TOKEN_KEY, token);
   }
 
-  public getToken(): string | undefined | null {
-    const token = this.localStorage.getItem(TOKEN_KEY);
-    if (token) {
-      return token
-    }
-    return null;
+  // ✅ Get token
+  getToken(): string | null {
+    return localStorage.getItem(TOKEN_KEY);
   }
 
-  public saveUser(user: any): void {
-    this.localStorage.removeItem(USER_KEY);
-    this.localStorage.setItem(USER_KEY, JSON.stringify(user));
+  // ✅ Save user with permissions
+  saveUser(user: CurrentUser): void {
+    localStorage.setItem(USER_KEY, JSON.stringify(user));
   }
 
-  public getUser(): any {
-    const user = this.localStorage.getItem(USER_KEY);
+  // ✅ Get user
+  getUser(): CurrentUser | null {
+    const user = localStorage.getItem(USER_KEY);
     if (user) {
-      return JSON.parse(user);
+      return JSON.parse(user) as CurrentUser;
     }
     return null;
   }
 
-
-  // public setReturnUrl(url: string): void {
-  //   url = this.window.location.href.replace(environment.apiURL, '');
-  //   let isProtectedRoute = fullPageBannerPrefixes.some(prefix => url.startsWith(prefix));
-  //   if (!isProtectedRoute) {
-  //     this._cookieService.delete(RETURNURL);
-  //     this._cookieService.set(RETURNURL, encryptLocalStorageData(url),this.cookieConfig);
-  //   }
-  // }
-
-  // public setCurrentUrl(url: string): void {
-  //   this._cookieService.delete(CURRENTURL);
-  //   this._cookieService.set(CURRENTURL, encryptLocalStorageData(url),this.cookieConfig);
-  // }
-
-  // public getCurrentUrl(): string {
-  //   const url = this._cookieService.get(CURRENTURL);
-  //   if (url) {
-  //     return url
-  //   }
-  //   return "/";
-  // }
-
-  public setLocalStorage(key: string, value: string): void {
-    this.localStorage.removeItem(key);
-    this.localStorage.setItem(key, value);
+  // ✅ Get user permissions
+  getUserPermissions(): string[] {
+    const user = this.getUser();
+    return user?.Permissions || [];
   }
 
-  public getLocalStorage(key: string): string | null {
-    const keyValue = this.localStorage.getItem(key);
-    if (keyValue) {
-      return decodeURIComponent(keyValue)
-    }
-    return null
+  // ✅ Check if user has permission
+  hasPermission(permissionCode: string): boolean {
+    const permissions = this.getUserPermissions();
+    return permissions.includes(permissionCode.toUpperCase());
   }
 
-  clearLocalStorage() {
-    Object.keys(localStorage).forEach((key) => {
-      if (key.startsWith(prefix)) {
-        localStorage.removeItem(key);
-      }
-    });
+  // ✅ Clear all (logout)
+  clearLocalStorage(): void {
+    localStorage.removeItem(TOKEN_KEY);
+    localStorage.removeItem(USER_KEY);
+  }
+
+  // ✅ Check if user is authenticated
+  isAuthenticated(): boolean {
+    return !!this.getToken();
+  }
+
+  // ✅ Get current user ID
+  getCurrentUserId(): number | null {
+    const user = this.getUser();
+    return user?.idUser || null;
   }
   
 }

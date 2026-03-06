@@ -14,6 +14,7 @@ import { ViewRole } from './Roles/view-role/view-role';
 import { PermissionRoles } from './Permissions/permission-roles/permission-roles';
 import { authGuard } from '../Guards/auth-guard';
 import { featureActiveResolver } from '../shared/resolvers/feature-active-resolver';
+import { permissionGuard } from '../Guards/permission-guard';
 
 const routes: Routes = [
   {
@@ -25,144 +26,157 @@ const routes: Routes = [
   {
     path: 'user-list',
     component: UserListing,
-    canActivate:[authGuard],
+    canActivate:[authGuard,permissionGuard],
     resolve: {
       featureCheck: featureActiveResolver
     },
     data: {
-      featureId: 1  
+      featureId: 1,
+      permission: 'USER_LIST'
     }
   },
   {
     path: 'add-user',
     component: AddEditUser,
-    canActivate:[authGuard],
+    canActivate:[authGuard, permissionGuard],
     resolve: {
       featureCheck: featureActiveResolver
     },
     data: {
-      featureId: 5  
+      featureId: 5,
+      permission: 'USER_CREATE'
     }
   },
   {
     path: 'edit-user/:id',
     component: AddEditUser,
-    canActivate:[authGuard],
+    canActivate:[authGuard, permissionGuard],
     resolve: {
       featureCheck: featureActiveResolver
     },
     data: {
-      featureId: 6  
+      featureId: 6,
+      permission: 'USER_EDIT'
     }
   },
   {
     path: 'view-user/:id',
     component: ViewUser,
-    canActivate:[authGuard],
+    canActivate:[authGuard, permissionGuard],
     resolve: {
       featureCheck: featureActiveResolver
     },
     data: {
-      featureId: 7 
+      featureId: 7,
+      permission: 'USER_VIEW'
     }
   },
   {
     path: 'permission-list',
     component: PermissionListing,
-    canActivate:[authGuard],
+    canActivate:[authGuard, permissionGuard],
     resolve: {
       featureCheck: featureActiveResolver
     },
     data: {
-      featureId: 8  
+      featureId: 8,
+      permission: 'PERMISSION_LIST'
     }
   },
   {
     path:'add-permission',
     component:AddEditPermissions,
-    canActivate:[authGuard],
+    canActivate:[authGuard, permissionGuard],
     resolve: {
       featureCheck: featureActiveResolver
     },
     data: {
-      featureId: 9  
+      featureId: 9,
+      permission: 'PERMISSION_CREATE'
     }
   },
   {
     path:'edit-permission/:id',
     component:AddEditPermissions,
-    canActivate:[authGuard],
+    canActivate:[authGuard, permissionGuard],
     resolve: {
       featureCheck: featureActiveResolver
     },
     data: {
-      featureId: 10  
+      featureId: 10,
+      permission: 'PERMISSION_EDIT'
     }
   },
   {
     path:'permission-user',
     component:PermissionUser,
-    canActivate:[authGuard],
+    canActivate:[authGuard, permissionGuard],
     resolve: {
       featureCheck: featureActiveResolver
     },
     data: {
-      featureId: 11 
+      featureId: 11,
+      permission: 'PERMISSION_USER'
     }
   },
   {
     path:'user-permission/:id',
     component:UserPermission,
-    canActivate:[authGuard],
+    canActivate:[authGuard, permissionGuard],
     resolve: {
       featureCheck: featureActiveResolver
     },
     data: {
-      featureId: 12  
+      featureId: 12,
+      permission: 'USER_PERMISSION'
     }
   },
   {
     path:'role-list',
     component:RoleListing,
-    canActivate:[authGuard],
+    canActivate:[authGuard, permissionGuard],
     resolve: {
       featureCheck: featureActiveResolver
     },
     data: {
-      featureId: 13  
+      featureId: 13,
+      permission: 'ROLE_LIST'
     }
   },
   {
     path:'add-role',
     component:AddEditRole,
-    canActivate:[authGuard],
+    canActivate:[authGuard, permissionGuard],
     resolve: {
       featureCheck: featureActiveResolver
     },
     data: {
-      featureId: 14  
+      featureId: 14,
+      permission: 'ROLE_CREATE'
     }
   },
   {
     path:'edit-role/:id',
     component:AddEditRole,
-    canActivate:[authGuard],
+    canActivate:[authGuard, permissionGuard],
     resolve: {
       featureCheck: featureActiveResolver
     },
     data: {
-      featureId: 15  
+      featureId: 15,
+      permission: 'ROLE_EDIT'
     }
   },
   {
     path:'permission-role/:id',
     component:PermissionRoles,
-    canActivate:[authGuard],
+    canActivate:[authGuard, permissionGuard],
     resolve: {
       featureCheck: featureActiveResolver
     },
     data: {
-      featureId: 16
+      featureId: 16,
+      permission: 'PERMISSION_ROLE'
     }
   }
 ];

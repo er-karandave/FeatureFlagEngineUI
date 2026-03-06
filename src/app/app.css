@@ -11,3 +11,56 @@ main.container {
   padding-top: 1rem;
   padding-bottom: 1rem;
 }
+
+/* app.component.css */
+.main-content {
+  margin-left: 260px;
+  min-height: 100vh;
+  background: #f7fafc;
+  transition: margin-left 0.3s ease;
+}
+
+/* ✅ Expand content when sidebar is collapsed */
+.main-content.sidebar-collapsed {
+  margin-left: 70px;
+}
+
+/* ✅ Mobile: No margin (sidebar overlays) */
+@media (max-width: 991px) {
+  .main-content {
+    margin-left: 0;
+  }
+  
+  .main-content.sidebar-collapsed {
+    margin-left: 0;
+  }
+}
+
+.mobile-header {
+  display: flex;
+  align-items: center;
+  padding: 15px 20px;
+  background: #1a1d2e;
+  color: #ffffff;
+  position: sticky;
+  top: 0;
+  z-index: 998;
+}
+
+.menu-toggle {
+  background: none;
+  border: none;
+  color: #ffffff;
+  font-size: 1.5rem;
+  margin-right: 15px;
+  cursor: pointer;
+}
+
+.app-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.content-wrapper {
+  padding: 20px;
+}

@@ -1,1 +1,184 @@
-<p>add-edit-user works!</p>
+<!-- components/add-edit-user/add-edit-user.component.html -->
+<div class="container-fluid py-4">
+  
+  <!-- ✅ Header -->
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="mb-0">
+      {{ isViewMode ? 'View' : isEditMode ? 'Edit' : 'Add' }} User
+    </h2>
+    <button class="btn btn-outline-secondary" (click)="cancel()">
+      <i class="bx bx-arrow-back me-1"></i> Back to List
+    </button>
+  </div>
+
+  <!-- ✅ Loading -->
+  <div *ngIf="loading" class="text-center py-5">
+    <div class="spinner-border text-primary" role="status"></div>
+    <p class="mt-2">Loading...</p>
+  </div>
+
+  <!-- ✅ Form -->
+  <div *ngIf="!loading" class="card shadow-sm">
+    <div class="card-body">
+      
+      <!-- ✅ Edit/Add Mode Form -->
+      <form [formGroup]="userForm" (ngSubmit)="saveUser()" *ngIf="!isViewMode; else viewTemplate">
+        
+        <div class="row g-3">
+          <!-- Username -->
+          <div class="col-md-6">
+            <label class="form-label">Username *</label>
+            <input 
+              type="text" 
+              class="form-control" 
+              formControlName="UserName" 
+              [readonly]="isFormDisabled"
+              [class.is-invalid]="hasError('UserName', 'required') || hasError('UserName', 'minlength')">
+            <div *ngIf="hasError('UserName', 'required')" class="invalid-feedback">
+              Username is required.
+            </div>
+            <div *ngIf="hasError('UserName', 'minlength')" class="invalid-feedback">
+              Username must be at least 3 characters.
+            </div>
+          </div>
+
+          <!-- Email -->
+          <div class="col-md-6">
+            <label class="form-label">Email *</label>
+            <input 
+              type="email" 
+              class="form-control" 
+              formControlName="Email" 
+              [readonly]="isFormDisabled"
+              [class.is-invalid]="hasError('Email', 'required') || hasError('Email', 'email')">
+            <div *ngIf="hasError('Email', 'required')" class="invalid-feedback">
+              Email is required.
+            </div>
+            <div *ngIf="hasError('Email', 'email')" class="invalid-feedback">
+              Please enter a valid email address.
+            </div>
+          </div>
+
+          <!-- Full Name -->
+          <div class="col-md-6">
+            <label class="form-label">Full Name</label>
+            <input 
+              type="text" 
+              class="form-control" 
+              formControlName="FullName" 
+              [readonly]="isFormDisabled"
+              [class.is-invalid]="hasError('FullName', 'maxlength')">
+            <div *ngIf="hasError('FullName', 'maxlength')" class="invalid-feedback">
+              Full name cannot exceed 100 characters.
+            </div>
+          </div>
+
+          <!-- Phone -->
+          <div class="col-md-6">
+            <label class="form-label">Phone</label>
+            <input 
+              type="tel" 
+              class="form-control" 
+              formControlName="Phone" 
+              [readonly]="isFormDisabled"
+              [class.is-invalid]="hasError('Phone', 'maxlength')">
+            <div *ngIf="hasError('Phone', 'maxlength')" class="invalid-feedback">
+              Phone number cannot exceed 20 characters.
+            </div>
+          </div>
+
+          <!-- Status -->
+          <div class="col-md-6" appHasPermission="'USER_EDIT'">
+            <label class="form-label">Status</label>
+            <div class="form-check form-switch">
+              <input 
+                class="form-check-input" 
+                type="checkbox" 
+                formControlName="isActive" 
+                id="isActiveSwitch">
+              <label class="form-check-label" for="isActiveSwitch">
+                {{ userForm.get('isActive')?.value ? 'Active' : 'Inactive' }}
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <!-- ✅ Action Buttons -->
+        <div class="d-flex justify-content-end gap-2 mt-4">
+          <button type="button" class="btn btn-outline-secondary" (click)="cancel()">
+            Cancel
+          </button>
+          
+          <!-- ✅ Delete button only in edit mode with permission -->
+          <button 
+            *ngIf="isEditMode" 
+            appHasPermission="'USER_DELETE'"
+            type="button" 
+            class="btn btn-outline-danger" 
+            (click)="deleteUser()">
+            <i class="bx bx-trash me-1"></i> Delete
+          </button>
+          
+          <!-- ✅ Save button with permission check -->
+          <button 
+            appHasPermission="isEditMode ? 'USER_EDIT' : 'USER_CREATE'"
+            type="submit" 
+            class="btn btn-primary" 
+            [disabled]="loading || isFormDisabled || userForm.invalid">
+            <span *ngIf="loading" class="spinner-border spinner-border-sm me-1" role="status"></span>
+            {{ isEditMode ? 'Update' : 'Create' }} User
+          </button>
+        </div>
+
+      </form>
+
+      <!-- ✅ View Mode Template -->
+      <ng-template #viewTemplate>
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <label class="fw-bold">Username</label>
+            <p>{{ user.UserName }}</p>
+          </div>
+          <div class="col-md-6 mb-3">
+            <label class="fw-bold">Email</label>
+            <p>{{ user.Email }}</p>
+          </div>
+          <div class="col-md-6 mb-3">
+            <label class="fw-bold">Full Name</label>
+            <p>{{ user.FullName || '-' }}</p>
+          </div>
+          <div class="col-md-6 mb-3">
+            <label class="fw-bold">Phone</label>
+            <p>{{ user.Phone || '-' }}</p>
+          </div>
+          <div class="col-md-6 mb-3">
+            <label class="fw-bold">Status</label>
+            <p>
+              <span class="badge" 
+                    [class.bg-success]="user.isActive" 
+                    [class.bg-secondary]="!user.isActive">
+                {{ user.isActive ? 'Active' : 'Inactive' }}
+              </span>
+            </p>
+          </div>
+          <div class="col-md-6 mb-3">
+            <label class="fw-bold">Created On</label>
+            <p>{{ user.CreatedOn | date:'medium' }}</p>
+          </div>
+        </div>
+
+        <!-- ✅ Edit button in view mode -->
+        <div class="d-flex justify-content-end mt-4">
+          <button 
+            *appHasPermission="'USER_EDIT'"
+            class="btn btn-primary" 
+            (click)="isEditMode = true; loadUser(userId!)">
+            <i class="bx bx-edit me-1"></i> Edit User
+          </button>
+        </div>
+      </ng-template>
+
+    </div>
+  </div>
+
+</div>

@@ -1,0 +1,81 @@
+<!-- components/sidebar/sidebar.component.html -->
+<div class="sidebar-wrapper" [class.collapsed]="isCollapsed()">
+
+  <!-- Header -->
+  <div class="sidebar-header">
+    <a class="sidebar-brand fw-bold" routerLink="/">
+      <i class="bx bx-shield-quarter me-2"></i>
+      <span class="brand-text" [class.hide]="isCollapsed()">MyApp</span>
+    </a>
+    <button class="toggle-btn" (click)="toggleSidebar()">
+      <i class="bx" [class.bx-chevron-left]="!isCollapsed()" [class.bx-chevron-right]="isCollapsed()"></i>
+    </button>
+  </div>
+
+  <!-- Loading State -->
+  @if (isLoading()) {
+  <div class="sidebar-loading">
+    <div class="spinner-border text-light" role="status"></div>
+    <p class="mt-2">Loading menu...</p>
+  </div>
+  }
+
+  <!-- User Info -->
+  <div class="sidebar-user" [class.hide]="isCollapsed()">
+    <div class="user-avatar">
+      <i class="bx bx-user-circle"></i>
+    </div>
+    <div class="user-info" *ngIf="currentUser() && !isCollapsed()">
+      <div class="user-name">{{ currentUser().UserName }}</div>
+      <div class="user-role">{{ currentUser().RoleName || 'User' }}</div>
+    </div>
+  </div>
+
+  <!-- ✅ Navigation Menu (with array check) -->
+  <nav class="sidebar-nav" *ngIf="!isLoading()">
+    <ul class="nav-list">
+      <!-- sidebar.component.html -->
+      @for (item of navItems(); track item.id) {
+      @if (item.children && item.children.length > 0) {
+      <!-- ✅ Parent menu with children -->
+      <li class="nav-item has-submenu">
+        <a class="nav-link" (click)="toggleSubMenu(item.id)">
+          <i class="{{ item.icon }}"></i>
+          <span>{{ item.label }}</span>
+        </a>
+        <ul class="submenu" [class.show]="isMenuExpanded(item.id)">
+          @for (child of item.children; track child.id) {
+          <li class="submenu-item">
+            <a [routerLink]="child.link">{{ child.label }}</a>
+          </li>
+          }
+        </ul>
+      </li>
+      } @else {
+      <!-- ✅ Single menu item (no children) -->
+      <li class="nav-item">
+        <a class="nav-link" [routerLink]="item.link">
+          <i class="{{ item.icon }}"></i>
+          <span>{{ item.label }}</span>
+        </a>
+      </li>
+      }
+      } @empty {
+      <li class="nav-item">
+        <div class="text-center text-muted py-3">
+          <i class="bx bx-menu d-block mb-2" style="font-size: 2rem;"></i>
+          <small>No menu items available</small>
+        </div>
+      </li>
+      }
+    </ul>
+  </nav>
+
+  <!-- Logout -->
+  <div class="sidebar-footer">
+    <button class="btn-logout" (click)="logout()">
+      <i class="bx bx-log-out"></i>
+      <span class="link-text" [class.hide]="isCollapsed()">Logout</span>
+    </button>
+  </div>
+</div>

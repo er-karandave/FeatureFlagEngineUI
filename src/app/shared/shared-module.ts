@@ -8,6 +8,7 @@ import { Toast } from './services/Toast/toast/toast';
 import { NgbToast } from '@ng-bootstrap/ng-bootstrap';
 import { LOCAL_STORAGE } from './services/TokenStorage/token-storage-service';
 import { NoLeadingSpace } from './directives/no-leading-space';
+import { HasPermission } from './directives/has-permission';
 
 
 @NgModule({
@@ -16,7 +17,8 @@ import { NoLeadingSpace } from './directives/no-leading-space';
     ErrorHandling,
     NotFoundPage,
     Toast,
-    NoLeadingSpace
+    NoLeadingSpace,
+    HasPermission
   ],
   imports: [
     CommonModule,

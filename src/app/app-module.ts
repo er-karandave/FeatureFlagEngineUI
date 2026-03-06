@@ -13,13 +13,15 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { LOCAL_STORAGE } from './shared/services/TokenStorage/token-storage-service';
 import { SharedModule } from './shared/shared-module';
 import { authInterceptor } from './Interceptors/auth-interceptor';
+import { SideNavBar } from './Common/side-nav-bar/side-nav-bar';
 
 @NgModule({
   declarations: [
     App,
     Login,
     Navbar,
-    Footer
+    Footer,
+    SideNavBar
   ],
   imports: [
     BrowserModule,

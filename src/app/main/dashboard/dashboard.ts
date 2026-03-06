@@ -21,12 +21,15 @@ export interface NavItem {
 
 export interface Feature {
   idFeature: number;
-  label: string;
-  details?: string;
-  featureDisplayName?: string;
+  featureName: string;
+  featureDetails: string;
+  featureDisplayName: string;
   link?: string;
-  status: string;
   isActive: boolean;
+  createdOn: Date;
+  createdBy: number;
+  updatedOn?: Date;
+  updatedBy?: number;
 }
 
 @Component({
@@ -106,7 +109,7 @@ export class Dashboard {
   }
 
   getAllFeatures() {
-    this._featureService.getAllFeatures()
+    this._featureService.getAllFeatures(true)
       .pipe(
         take(1),
         map((features: Feature[]) =>

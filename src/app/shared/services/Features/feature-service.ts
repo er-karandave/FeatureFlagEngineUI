@@ -9,6 +9,25 @@ export interface FeatureStatusResponse {
   message?: string;
 }
 
+// export interface Feature {
+//   idFeature: number;
+//   featureName: string;
+//   featureDetails: string;
+//   featureDisplayName: string;
+//   link?: string;
+//   isActive: boolean;
+//   createdOn: Date;
+//   createdBy: number;
+//   updatedOn?: Date;
+//   updatedBy?: number;
+// }
+
+export interface FeatureResponse {
+  success: boolean;
+  message: string;
+  data: Feature[];
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -35,8 +54,8 @@ export class FeatureService {
     return this._commonService.post(`${GlobalComponent.getAllInActiveFeatures}`)
   }
 
-  getAllFeatures(): Observable<any> {
-    return this._commonService.post(`${GlobalComponent.getAllFeatures}`)
+  getAllFeatures(includeInactive: boolean = false): Observable<any> {
+    return this._commonService.post(`${GlobalComponent.getAllFeatures}?includeInactive=${includeInactive}`)
   }
 
   updateFeature(updatedFeature: Feature): Observable<any> {

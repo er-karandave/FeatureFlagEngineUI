@@ -1,7 +1,8 @@
 import { environment } from "../environments/environment.development";
 
 export const GlobalComponent = {
-    loginApi : `${environment.apiURL}User/login`,
+    // loginApi : `${environment.apiURL}User/login`,
+    loginApi : `${environment.apiURL}Auth/login`,
     getFeatureByFeatureMasterId : `${environment.apiURL}Feature/getFeaturesByFeatureMasterId`,
     getFeatureByFeatureId : `${environment.apiURL}Feature/getFeaturesByFeatureId`,
     getAllActiveFeatures : `${environment.apiURL}Feature/getAllActiveFeatures`,
@@ -10,4 +11,5 @@ export const GlobalComponent = {
     updateFeatureStatus : `${environment.apiURL}Feature/UpdateFeatureStatus`,
     deleteFeatureById : `${environment.apiURL}Feature/deleteFeatureById`,
     isFeatureActive : `${environment.apiURL}Feature/`,
+    navigationMenu : `${environment.apiURL}Navigation/menu`,
 }

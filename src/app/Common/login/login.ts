@@ -1,5 +1,5 @@
-import { Component, EventEmitter, Output } from '@angular/core';
-import { AbstractControl, FormControl, FormGroup, UntypedFormGroup, Validators } from '@angular/forms';
+import { Component, EventEmitter, inject, Output } from '@angular/core';
+import { AbstractControl, FormBuilder, FormControl, FormGroup, UntypedFormGroup, Validators } from '@angular/forms';
 import { UserLogin } from '../../shared/models/userLogin';
 import { catchError, EMPTY, finalize, map } from 'rxjs';
 import { LoaderService } from '../../shared/services/Loader/loader-service';
@@ -8,6 +8,7 @@ import { ToastService } from '../../shared/services/Toast/toast-service';
 import { TokenStorageService } from '../../shared/services/TokenStorage/token-storage-service';
 import { Router } from '@angular/router';
 import { RouteHistoryService } from '../../shared/services/RouteHistory/route-history-service';
+import { AuthService } from '../../shared/services/Auth/auth-service';
 
 @Component({
   selector: 'app-login',
@@ -17,98 +18,114 @@ import { RouteHistoryService } from '../../shared/services/RouteHistory/route-hi
 })
 export class Login {
 
-
-  form: UntypedFormGroup;
+  form: FormGroup;
   showPassword: boolean = false;
-  afterLogin: string = "previousPage";
-  @Output() afterLoginEmit = new EventEmitter<any>();
-  constructor(private _loaderService: LoaderService,
-    private _userService: UserService,
-    private _toastService: ToastService,
-    private _tokenStorageService: TokenStorageService,
-    private _router: Router,
-    private _routeHistory: RouteHistoryService
-  ) {
-    this.form = new FormGroup({
-      email: new FormControl(null, [Validators.required, Validators.email]),
-      password: new FormControl(null, [Validators.required]),
+  loading: boolean = false;
+  currentYear: number = new Date().getFullYear();
 
+  private fb = inject(FormBuilder);
+  private userService = inject(UserService);
+  private toastService = inject(ToastService);
+  private tokenStorage = inject(TokenStorageService);
+  private router = inject(Router);
+  private loaderService = inject(LoaderService);
+  private authService = inject(AuthService);
+
+
+  constructor() {
+    // ✅ Redirect if already logged in
+    if (this.tokenStorage.getToken()) {
+      this.router.navigate(['/dashboard']);
+    }
+
+    this.form = this.fb.group({
+      email: ['', [Validators.required, Validators.email]],
+      password: ['', [Validators.required, Validators.minLength(6)]]
     });
   }
 
-   ngOnInit() {
-    console.log(this._router.url)
-    this._userService.isLoggedIn$.subscribe(status => {
-        console.log(this._router.url)
-        if(status){
-          let prevURL = this._routeHistory.getPreviousUrl()
-          if(prevURL === '/'){
-            prevURL = '/dashboard';
-          }
-          this._router.navigate([prevURL]);
-        }
-      });
-   }
+  ngOnInit(): void {
+    // Optional: Subscribe to login status if needed
+    this.authService.isLoggedIn$.subscribe(status => {
+      if (status) {
+        this.router.navigate(['/dashboard']);
+      }
+    });
+  }
 
+  // ✅ Getter for form controls
   get f(): { [key: string]: AbstractControl } {
     return this.form.controls;
   }
 
-  onSubmit() {
-    let formValues = this.form.getRawValue();
-    this.form.markAllAsTouched()
+  // ✅ Form submission
+  onSubmit(): void {
+    this.form.markAllAsTouched();
+
     if (this.form.invalid) {
-      return
+      return;
     }
-    this.submitForm(formValues)
+
+    this.submitForm(this.form.getRawValue());
   }
 
-  submitForm(formValues: UserLogin) {
-    this._loaderService.showLoader();
-    this._userService.login(formValues).pipe(
+  // ✅ Call login API
+  submitForm(formValues: any): void {
+    this.loading = true;
+    this.loaderService.showLoader();
+
+    this.authService.login(formValues).pipe(
       map((response: any) => {
-        this._toastService.success(response.message);
-        this.setDataAfterLogin(response);
+        if (response.success) {
+          this.toastService.success(response.message || 'Login successful!');
+          this.setDataAfterLogin(response);
+        } else {
+          this.toastService.error(response.message || 'Login failed.');
+        }
       }),
       catchError((err: any) => {
-        this.handelError(err, this.form);
-
+        this.handleError(err);
         return EMPTY;
       }),
       finalize(() => {
-        this._loaderService.hideLoader();
-      }),
+        this.loading = false;
+        this.loaderService.hideLoader();
+      })
     ).subscribe();
   }
 
+  // ✅ Handle API errors
+  private handleError(error: any): void {
+    const message = error?.error?.message || error?.message || 'Login failed. Please check your credentials.';
+    this.toastService.error(message);
 
-  handelError(errors: any, forms: any) {
-    if (errors !== null && Object.keys(errors).length > 0) {
-      for (let error in errors) {
-        if (errors[error].length > 0) {
-          errors[error].forEach((element: any) => {
-            if (forms.controls[error]) {
-              forms.controls[error].setErrors(element, { emitEvent: true })
-            }
-          });
-        } else {
-          if (forms.controls[error]) {
-            forms.controls[error].setErrors(errors[error][0], { emitEvent: true })
-          }
-        }
-      }
-    }
+    // ✅ Clear form on error (optional)
+    // this.form.reset();
   }
 
-  togglePasswordInput(): any {
+  // ✅ Save token and user data after successful login
+  private setDataAfterLogin(responseData: any): void {
+    // ✅ Save user info with permissions
+    this.tokenStorage.saveUser({
+      idUser: responseData.user.idUser,
+      UserName: responseData.user.userName,
+      Email: responseData.user.email,
+      FullName: responseData.user.fullName,
+      RoleId: responseData.user.roleId,
+      RoleName: responseData.user.roleName,
+      Permissions: responseData.user.allPermissions?.map((p: string) => p.toUpperCase()) || []
+    });
+
+    // ✅ Save JWT token
+    this.tokenStorage.saveToken(responseData.token);
+
+    // ✅ Navigate to dashboard
+    this.router.navigate(['/dashboard']);
+  }
+
+  // ✅ Toggle password visibility
+  togglePasswordInput(): void {
     this.showPassword = !this.showPassword;
-  }
-
-  setDataAfterLogin(responseData: any) {
-    this._tokenStorageService.saveUser({ ...responseData.user, ip: responseData.ip });
-    this._tokenStorageService.saveToken(responseData.token);
-    this.afterLoginEmit.emit({ ...responseData.user, ip: responseData.ip })
-    this._router.navigateByUrl('/dashboard')
   }
 }
 
