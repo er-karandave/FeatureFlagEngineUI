@@ -54,10 +54,8 @@ export class AuthService {
     return this.http.post<AuthResponse>(GlobalComponent.loginApi, credentials).pipe(
       tap((response) => {
         if (response.success && response.token) {
-          // ✅ Save token
           this.tokenStorage.saveToken(response.token);
           this.isLoggedInSubject.next(true)
-          // ✅ Save user with permissions
           this.tokenStorage.saveUser({
             idUser: response.user.idUser,
             UserName: response.user.userName,
@@ -67,17 +65,14 @@ export class AuthService {
             RoleName: response.user.roleName,
             Permissions: response.user.allPermissions.map(p => p.toUpperCase())
           });
-          // this.permissionService.saveCurrentUser(currentUser);
         }
       })
     );
   }
 
   logout(): Observable<any> {
-    //LogOut
     return this.http.post(GlobalComponent.loginApi, {}).pipe(
       tap(() => {
-        // ✅ Clear local storage regardless of server response
         this.tokenStorage.clearLocalStorage();
         this.isLoggedInSubject.next(false)
         this.router.navigate(['/login']);

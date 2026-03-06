@@ -26,24 +26,20 @@ export class App {
   private authService = inject(AuthService);
 
   ngOnInit(): void {
-    // ✅ Check initial login status from token
     this.isUserLoggedIn = this.tokenStorage.isAuthenticated();
 
-    // ✅ Subscribe to login status for UI updates (navbar show/hide)
     this.authService.isLoggedIn$.subscribe(status => {
       this.isUserLoggedIn = status;
       
     });
 
-    // ✅ Optional: Log navigation for debugging
     // this.router.events.pipe(
     //   filter(event => event instanceof NavigationEnd)
     // ).subscribe((event: any) => {
-    //   console.log('🗺️ Navigation to:', event.urlAfterRedirects);
+    //   console.log('Navigation to:', event.urlAfterRedirects);
     // });
   }
 
-  // ✅ Logout method (called from navbar)
   onSidebarToggle(collapsed: boolean): void {
     this.sidebarCollapsed.set(collapsed);
   }

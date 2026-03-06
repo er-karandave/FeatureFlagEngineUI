@@ -1,7 +1,6 @@
-<!-- components/add-edit-user/add-edit-user.component.html -->
+
 <div class="container-fluid py-4">
   
-  <!-- ✅ Header -->
   <div class="d-flex justify-content-between align-items-center mb-4">
     <h2 class="mb-0">
       {{ isViewMode ? 'View' : isEditMode ? 'Edit' : 'Add' }} User
@@ -11,21 +10,17 @@
     </button>
   </div>
 
-  <!-- ✅ Loading -->
   <div *ngIf="loading" class="text-center py-5">
     <div class="spinner-border text-primary" role="status"></div>
     <p class="mt-2">Loading...</p>
   </div>
 
-  <!-- ✅ Form -->
   <div *ngIf="!loading" class="card shadow-sm">
     <div class="card-body">
       
-      <!-- ✅ Edit/Add Mode Form -->
       <form [formGroup]="userForm" (ngSubmit)="saveUser()" *ngIf="!isViewMode; else viewTemplate">
         
         <div class="row g-3">
-          <!-- Username -->
           <div class="col-md-6">
             <label class="form-label">Username *</label>
             <input 
@@ -42,7 +37,6 @@
             </div>
           </div>
 
-          <!-- Email -->
           <div class="col-md-6">
             <label class="form-label">Email *</label>
             <input 
@@ -58,8 +52,6 @@
               Please enter a valid email address.
             </div>
           </div>
-
-          <!-- Full Name -->
           <div class="col-md-6">
             <label class="form-label">Full Name</label>
             <input 
@@ -72,8 +64,6 @@
               Full name cannot exceed 100 characters.
             </div>
           </div>
-
-          <!-- Phone -->
           <div class="col-md-6">
             <label class="form-label">Phone</label>
             <input 
@@ -86,8 +76,6 @@
               Phone number cannot exceed 20 characters.
             </div>
           </div>
-
-          <!-- Status -->
           <div class="col-md-6" appHasPermission="'USER_EDIT'">
             <label class="form-label">Status</label>
             <div class="form-check form-switch">
@@ -103,13 +91,10 @@
           </div>
         </div>
 
-        <!-- ✅ Action Buttons -->
         <div class="d-flex justify-content-end gap-2 mt-4">
           <button type="button" class="btn btn-outline-secondary" (click)="cancel()">
             Cancel
           </button>
-          
-          <!-- ✅ Delete button only in edit mode with permission -->
           <button 
             *ngIf="isEditMode" 
             appHasPermission="'USER_DELETE'"
@@ -118,8 +103,6 @@
             (click)="deleteUser()">
             <i class="bx bx-trash me-1"></i> Delete
           </button>
-          
-          <!-- ✅ Save button with permission check -->
           <button 
             appHasPermission="isEditMode ? 'USER_EDIT' : 'USER_CREATE'"
             type="submit" 
@@ -131,8 +114,6 @@
         </div>
 
       </form>
-
-      <!-- ✅ View Mode Template -->
       <ng-template #viewTemplate>
         <div class="row">
           <div class="col-md-6 mb-3">
@@ -166,8 +147,6 @@
             <p>{{ user.CreatedOn | date:'medium' }}</p>
           </div>
         </div>
-
-        <!-- ✅ Edit button in view mode -->
         <div class="d-flex justify-content-end mt-4">
           <button 
             *appHasPermission="'USER_EDIT'"

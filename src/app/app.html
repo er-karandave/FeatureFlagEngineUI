@@ -1,26 +1,10 @@
 <div class="app-container d-flex flex-column min-vh-100">
 
-<!-- <ng-container *ngIf="isUserLoggedIn; else loginTemplate">
-  <app-navbar class="sticky-top shadow-sm" (logout)="logout()"></app-navbar>
-
-  <main class="flex-grow-1 container mt-5 pt-5">
-    <router-outlet></router-outlet>
-  </main>
-</ng-container>
-
-<ng-template #loginTemplate>
-  <router-outlet></router-outlet>
-</ng-template> -->
-
-<!-- app.component.html -->
 <ng-container *ngIf="isUserLoggedIn; else loginTemplate">
-  <!-- ✅ Sidebar with Toggle Event -->
   <app-side-nav-bar (sidebarToggle)="onSidebarToggle($event)"></app-side-nav-bar>
 
-  <!-- ✅ Main Content (Adjusts Based on Sidebar State) -->
   <main class="main-content" [class.sidebar-collapsed]="sidebarCollapsed()">
     
-    <!-- ✅ Mobile Menu Toggle -->
     <div class="mobile-header d-lg-none">
       <button class="menu-toggle" (click)="toggleMobileSidebar()">
         <i class="bx bx-menu"></i>
@@ -28,7 +12,6 @@
       <span class="app-title">MyApp</span>
     </div>
 
-    <!-- ✅ Router Outlet -->
     <div class="content-wrapper">
       <router-outlet></router-outlet>
     </div>

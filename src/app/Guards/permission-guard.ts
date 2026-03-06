@@ -19,6 +19,5 @@ export const permissionGuard: CanActivateFn = (
   console.warn(`Access denied: User lacks permission '${requiredPermission}'`);
   return router.createUrlTree(['/dashboard']);
 
-  // Option 2: Stay on current page (return false)
   // return false;
 };

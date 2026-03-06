@@ -1,55 +1,19 @@
-<!-- @for(toast of toastService.toasts; track $index){
-    <ngb-toast
-  *ngFor="let toast of toastService.toasts"
-  [class]="toast.classname"
-  style="width: fit-content;"
-  [autohide]="true"
-  [delay]="toast.delay"
-  (hidden)="toastService.remove(toast)"
-  (click)="toastService.remove(toast)"
->
-  <div class="d-flex align-items-center col-12">
-    <i [ngClass]="toast.icon" class="me-2 fs-2"></i>
-    <div>
-      <ng-template [ngIf]="isTemplate(toast)" [ngIfElse]="text">
-        <ng-template [ngTemplateOutlet]="toast.textOrTpl"></ng-template>
-      </ng-template>
-      <ng-template #text>{{ toast.textOrTpl }}</ng-template>
-    </div>
+<div *ngFor="let toast of toastService.toasts()" class="toast show" role="alert" [class]="toast.classname"
+  [attr.data-bs-delay]="toast.delay">
+
+  <div class="toast-header" [class]="toast.classname">
+    <i class="{{ toast.icon }} me-2"></i>
+    <strong class="me-auto">Notification</strong>
+    <button type="button" class="btn-close btn-close-white" (click)="toastService.remove(toast.id)" aria-label="Close">
+    </button>
   </div>
-</ngb-toast>
 
-  } -->
-
-
-  <!-- toast-container.component.html -->
-<!-- <div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 1200"> -->
-<div 
-    *ngFor="let toast of toastService.toasts()" 
-    class="toast show" 
-    role="alert" 
-    [class]="toast.classname"
-    [attr.data-bs-delay]="toast.delay">
-    
-    <div class="toast-header" [class]="toast.classname">
-      <i class="{{ toast.icon }} me-2"></i>
-      <strong class="me-auto">Notification</strong>
-      <!-- ✅ Pass toast.id to remove() -->
-      <button 
-        type="button" 
-        class="btn-close btn-close-white" 
-        (click)="toastService.remove(toast.id)" 
-        aria-label="Close">
-      </button>
-    </div>
-    
-    <div class="toast-body">
-      <ng-container *ngIf="isTemplateRef(toast.textOrTpl); else stringContent">
-        <ng-template [ngTemplateOutlet]="toast.textOrTpl"></ng-template>
-      </ng-container>
-      <ng-template #stringContent>
-        {{ toast.textOrTpl }}
-      </ng-template>
-    </div>
+  <div class="toast-body">
+    <ng-container *ngIf="isTemplateRef(toast.textOrTpl); else stringContent">
+      <ng-template [ngTemplateOutlet]="toast.textOrTpl"></ng-template>
+    </ng-container>
+    <ng-template #stringContent>
+      {{ toast.textOrTpl }}
+    </ng-template>
   </div>
-<!-- </div> -->
+</div>

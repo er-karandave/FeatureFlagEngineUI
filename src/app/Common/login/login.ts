@@ -33,7 +33,6 @@ export class Login {
 
 
   constructor() {
-    // ✅ Redirect if already logged in
     if (this.tokenStorage.getToken()) {
       this.router.navigate(['/dashboard']);
     }
@@ -45,7 +44,6 @@ export class Login {
   }
 
   ngOnInit(): void {
-    // Optional: Subscribe to login status if needed
     this.authService.isLoggedIn$.subscribe(status => {
       if (status) {
         this.router.navigate(['/dashboard']);
@@ -53,12 +51,10 @@ export class Login {
     });
   }
 
-  // ✅ Getter for form controls
   get f(): { [key: string]: AbstractControl } {
     return this.form.controls;
   }
 
-  // ✅ Form submission
   onSubmit(): void {
     this.form.markAllAsTouched();
 
@@ -69,7 +65,6 @@ export class Login {
     this.submitForm(this.form.getRawValue());
   }
 
-  // ✅ Call login API
   submitForm(formValues: any): void {
     this.loading = true;
     this.loaderService.showLoader();
@@ -94,18 +89,14 @@ export class Login {
     ).subscribe();
   }
 
-  // ✅ Handle API errors
   private handleError(error: any): void {
     const message = error?.error?.message || error?.message || 'Login failed. Please check your credentials.';
     this.toastService.error(message);
 
-    // ✅ Clear form on error (optional)
     // this.form.reset();
   }
 
-  // ✅ Save token and user data after successful login
   private setDataAfterLogin(responseData: any): void {
-    // ✅ Save user info with permissions
     this.tokenStorage.saveUser({
       idUser: responseData.user.idUser,
       UserName: responseData.user.userName,
@@ -116,14 +107,11 @@ export class Login {
       Permissions: responseData.user.allPermissions?.map((p: string) => p.toUpperCase()) || []
     });
 
-    // ✅ Save JWT token
     this.tokenStorage.saveToken(responseData.token);
 
-    // ✅ Navigate to dashboard
     this.router.navigate(['/dashboard']);
   }
 
-  // ✅ Toggle password visibility
   togglePasswordInput(): void {
     this.showPassword = !this.showPassword;
   }

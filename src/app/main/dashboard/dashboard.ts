@@ -1,7 +1,6 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, signal } from '@angular/core';
-import { FeatureService, FeatureStatusResponse } from '../../shared/services/Features/feature-service';
+import { FeatureService } from '../../shared/services/Features/feature-service';
 import { catchError, map, of, take } from 'rxjs';
-import { FormControl, FormGroup } from '@angular/forms';
 import { ToastService } from '../../shared/services/Toast/toast-service';
 import { FeatureState } from '../../shared/services/FeatureState/feature-state';
 
@@ -159,7 +158,7 @@ export class Dashboard {
       link: this.featureLink()
     };
 
-    console.log(updatedFeature);
+    // console.log(updatedFeature);
     // this._featureService.updateFeature(updatedFeature)
     //   .pipe(take(1))
     //   .subscribe({
@@ -220,10 +219,8 @@ export class Dashboard {
 
   private showNotification(message: string, type: 'success' | 'error') {
     if (type === 'success') {
-      console.log('✅', message);
       this.toastr.success(message);
     } else {
-      console.error('❌', message);
       alert(message);
       this.toastr.error(message);
     }

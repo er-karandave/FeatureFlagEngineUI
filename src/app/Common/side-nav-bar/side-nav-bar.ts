@@ -8,7 +8,6 @@ import { AuthService } from '../../shared/services/Auth/auth-service';
 import { NavigationService } from '../../shared/services/Navigation/navigation-service';
 
 
-// models/nav-item.model.ts
 export interface NavItem {
   id: number;
   label: string;
@@ -17,7 +16,7 @@ export interface NavItem {
   exact?: boolean;
   parentId?: number | null;
   dimMasterId?: number | null;
-  children: NavItem[];  // ✅ Required, default to []
+  children: NavItem[];  
   hasPermission?: boolean;
 }
 
@@ -42,7 +41,6 @@ export class SideNavBar {
 
   @Output() sidebarToggle = new EventEmitter<boolean>();
 
-  // ✅ Prevent memory leaks
   private destroy$ = new Subject<void>();
 
   private router = inject(Router);
@@ -55,7 +53,6 @@ export class SideNavBar {
     this.currentUser.set(this.tokenStorage.getUser());
     this.loadNavItems();
 
-    // ✅ Close sidebar on mobile after navigation
     this.router.events.pipe(
       filter(event => event instanceof NavigationEnd),
       takeUntil(this.destroy$)
@@ -66,7 +63,6 @@ export class SideNavBar {
     });
   }
 
-  // ✅ Load navigation items (grouped by DimMaster Feature)
   loadNavItems(): void {
   this.isLoading.set(true);
   
@@ -75,55 +71,43 @@ export class SideNavBar {
     tap(response => console.log('✅ Navigation response:', response))
   ).subscribe({
     next: (response: any) => {
-      // ✅ STEP 1: Extract array from response
       let items: NavItem[] = [];
       
       if (Array.isArray(response)) {
-        // ✅ Direct array response
+     
         items = response;
       } else if (response?.data && Array.isArray(response.data)) {
-        // ✅ Wrapped response: { success, message, data: [...] }
         items = response.data;
       } else if (response?.success && Array.isArray(response.Data)) {
-        // ✅ PascalCase variant: { Success, Message, Data: [...] }
         items = response.Data;
       } else {
-        console.error('❌ Unexpected response format:', response);
         items = this.navigationService.getDefaultNavItems();
       }
 
-      // ✅ STEP 2: Normalize children property for all items
       const normalizedItems = this.normalizeNavigationItems(items);
 
-      // ✅ STEP 3: Update signal with normalized items
       if (Array.isArray(normalizedItems)) {
         this.navItems.set(normalizedItems);
-        console.log('✅ Navigation loaded:', normalizedItems.length, 'items');
       } else {
-        console.error('❌ Navigation data is not an array after normalization');
         this.navItems.set([]);
       }
       
       this.isLoading.set(false);
     },
     error: (err) => {
-      console.error('❌ Failed to load navigation:', err);
       this.isLoading.set(false);
       this.navItems.set(this.navigationService.getDefaultNavItems());
     }
   });
 }
 
-// ✅ Helper: Normalize navigation items (handle missing/empty children)
 private normalizeNavigationItems(items: NavItem[]): NavItem[] {
   return items.map(item => {
-    // ✅ Ensure children is always an array (never undefined/null)
     const normalized: NavItem = {
       ...item,
       children: Array.isArray(item.children) ? item.children : []
     };
 
-    // ✅ Recursively normalize nested children
     if (normalized.children && normalized.children.length > 0) {
       normalized.children = this.normalizeNavigationItems(normalized.children);
     }
@@ -147,7 +131,6 @@ private normalizeNavigationItems(items: NavItem[]): NavItem[] {
     return this.expandedMenus().includes(parentId);
   }
 
-  // ✅ Toggle sidebar collapse (with event emission)
   toggleSidebar(): void {
     const newValue = !this.isCollapsed();
     this.setCollapsed(newValue);
@@ -155,7 +138,7 @@ private normalizeNavigationItems(items: NavItem[]): NavItem[] {
 
   setCollapsed(collapsed: boolean): void {
     this.isCollapsed.set(collapsed);
-    this.sidebarToggle.emit(collapsed); // ✅ Notify parent
+    this.sidebarToggle.emit(collapsed);
   }
 
   logout(): void {
@@ -176,7 +159,6 @@ private normalizeNavigationItems(items: NavItem[]): NavItem[] {
     }
   }
 
-  // sidebar.component.ts (add this method)
   isMobile(): boolean {
     return window.innerWidth < 992;
   }

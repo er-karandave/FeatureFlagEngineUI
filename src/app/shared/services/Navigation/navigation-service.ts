@@ -28,7 +28,7 @@ export class NavigationService {
     this.isLoadingSubject.next(true);
 
     this.navigationMenu$ =  this.http.get<any>(`${GlobalComponent.navigationMenu}`).pipe(
-      shareReplay(1), // ✅ CRITICAL: Shares single HTTP call across all subscribers
+      shareReplay(1), 
       tap(response => {
         if (response.success && Array.isArray(response.data)) {
           this.navItemsSubject.next(response.data);
@@ -40,7 +40,7 @@ export class NavigationService {
       catchError(error => {
         console.error('Error loading navigation:', error);
         this.isLoadingSubject.next(false);
-        this.navigationMenu$ = null; // ✅ Reset cache on error to allow retry
+        this.navigationMenu$ = null; 
         const defaultItems = this.getDefaultNavItems();
         this.navItemsSubject.next(defaultItems);
         return throwError(() => error);
@@ -81,19 +81,16 @@ export class NavigationService {
     return this.navItemsSubject.getValue();
   }
 
-  // ✅ Clear cached navigation (on logout)
   clearNavigation(): void {
-    this.navigationMenu$ = null; // ✅ Reset observable cache
-    this.navItemsSubject.next([]); // ✅ Reset subject
+    this.navigationMenu$ = null; 
+    this.navItemsSubject.next([]);
   }
 
-  // ✅ Force refresh navigation (e.g., after permission change)
   refreshNavigation(): Observable<NavItem[]> {
-    this.navigationMenu$ = null; // ✅ Invalidate cache
-    return this.getNavigationMenu(true); // ✅ Force new HTTP call
+    this.navigationMenu$ = null; 
+    return this.getNavigationMenu(true); 
   }
 
-  // ✅ Default fallback items
   getDefaultNavItems(): NavItem[] {
     return [
       { id: 0, label: 'Dashboard', link: '/dashboard', icon: 'bx bx-home', exact: true, children: [] },
