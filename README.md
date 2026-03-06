@@ -1,7 +1,22 @@
 # FeatureFlagEngine
 
 This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 20.1.6.
+# ✅ Node.js & npm (Angular)
+Node.js: >= 18.19.0
+npm: >= 10.2.0
 
+Once Installation is done check for versions
+# Check Node.js
+node --version  # Should show v18.x or higher
+npm --version   # Should show 10.x or higher
+
+# Check .NET
+dotnet --version  # Should show 8.0.x
+
+# Check SQL Server (via SSMS or sqlcmd)
+sqlcmd -S localhost -U sa -P "YourPassword" -Q "SELECT @@VERSION"
+
+Insite project command prompt pass "npm i" to install all the node packages.
 ## Development server
 
 To start a local development server, run:
